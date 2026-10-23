@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cosmic Kitchen - Galaxy Alchemical Cookbook</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        space: {
+                            deep: '#070714',
+                            card: '#120E2E',
+                            border: '#2D1F66',
+                            cyan: '#00F0FF',
+                            magenta: '#FF007F',
+                            violet: '#8A2BE2',
+                            gold: '#FFD700',
+                            starlight: '#E0E7FF'
+                        }
+                    },
+                    animation: {
+                        'pulse-glow': 'pulseGlow 3s infinite alternate',
+                        'float': 'float 4s ease-in-out infinite',
+                        'twinkle': 'twinkle 2s infinite alternate'
+                    },
+                    keyframes: {
+                        pulseGlow: {
+                            '0%': { boxShadow: '0 0 15px rgba(138, 43, 226, 0.4)' },
+                            '100%': { boxShadow: '0 0 25px rgba(0, 240, 255, 0.7)' }
+                        },
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0px)' },
+                            '50%': { transform: 'translateY(-8px)' }
+                        },
+                        twinkle: {
+                            '0%': { opacity: '0.3', transform: 'scale(0.9)' },
+                            '100%': { opacity: '1', transform: 'scale(1.1)' }
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #070714;
+            color: #E0E7FF;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            overflow-x: hidden;
+        }
+
+        .cosmic-card {
+            background: rgba(18, 14, 46, 0.85);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(138, 43, 226, 0.35);
+            box-shadow: 0 8px 32px 0 rgba(7, 7, 20, 0.8);
+        }
+
+        .cosmic-card:hover {
+            border-color: rgba(0, 240, 255, 0.6);
+        }
+
+        .text-glow-cyan {
+            text-shadow: 0 0 10px rgba(0, 240, 255, 0.6);
+        }
+
+        .text-glow-gold {
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.6);
+        }
+
+        .text-glow-magenta {
+            text-shadow: 0 0 10px rgba(255, 0, 127, 0.6);
+        }
+
+        .modal-overlay {
+            background: rgba(7, 7, 20, 0.9);
+            backdrop-filter: blur(8px);
+        }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #070714;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #2D1F66;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #00F0FF;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-0 sm:p-4 relative">
+
+    <!-- Starfield Canvas Animation -->
+    <canvas id="starfield" class="fixed inset-0 pointer-events-none z-0"></canvas>
+
+    <!-- Main Application Shell -->
+    <main class="w-full max-w-md h-screen sm:h-[880px] sm:rounded-3xl cosmic-card flex flex-col justify-between overflow-hidden relative z-10 border-0 sm:border border-purple-500/30">
+
+        <!-- Header Navigation & Astra The Star Being Companion -->
+        <header class="p-4 border-b border-space-border bg-slate-950/80 backdrop-blur-md sticky top-0 z-20 flex justify-between items-center">
+            <div class="flex items-center space-x-3">
+                <!-- Astra Avatar -->
+                <div onclick="astraSpeak('Greetings, Alchemist! Tap ingredients or recipes to begin culinary magic!')" class="relative cursor-pointer group">
+                    <div class="w-11 h-11 rounded-full bg-gradient-to-tr from-space-cyan via-space-magenta to-space-gold p-0.5 animate-pulse-glow shadow-lg shadow-cyan-500/20">
+                        <div class="w-full h-full bg-slate-950 rounded-full flex items-center justify-center relative overflow-hidden">
+                            <span class="text-xl animate-float">⭐</span>
+                        </div>
+                    </div>
+                    <span class="absolute -bottom-1 -right-1 bg-space-gold text-slate-950 text-[9px] font-black px-1.5 rounded-full border border-slate-950">Astra</span>
+                </div>
+
+                <div>
+                    <h1 class="text-lg font-extrabold bg-gradient-to-r from-space-cyan via-purple-300 to-space-gold bg-clip-text text-transparent text-glow-cyan tracking-wide">
+                        Cosmic Kitchen
+                    </h1>
+                    <p class="text-[10px] text-purple-300">Guided by Astra • Food Waste Alchemist</p>
+                </div>
+            </div>
+
+            <span class="text-[10px] bg-purple-950/80 text-space-cyan border border-space-cyan/40 px-2.5 py-1 rounded-full font-mono">
+                ✨ Zero-Waste v2.0
+            </span>
+        </header>
+
+        <!-- Astra Interactive Wisdom Box -->
+        <div class="bg-gradient-to-r from-purple-950/80 via-slate-900/90 to-purple-950/80 border-b border-space-border p-3 px-4 flex items-start gap-3 relative z-10">
+            <div class="text-xl animate-float shrink-0">🔮</div>
+            <div class="flex-1">
+                <div class="flex justify-between items-center">
+                    <span class="text-[10px] font-bold uppercase tracking-wider text-space-gold text-glow-gold">Astra's Cosmic Guidance</span>
+                    <button onclick="cycleAstraTip()" class="text-[10px] text-space-cyan hover:underline">Ask Astra 🪄</button>
+                </div>
+                <p id="astra-message" class="text-xs text-purple-100 mt-0.5 leading-snug">
+                    "Welcome! Select leftover items in your active pantry below, and I will conjure zero-waste recipes!"
+                </p>
+            </div>
+        </div>
+
+        <!-- Scrollable Main Content -->
+        <div class="flex-1 overflow-y-auto p-4 space-y-6">
+
+            <!-- Section 1: Pantry Fridge Photo Scanner -->
+            <section class="space-y-2">
+                <div class="flex justify-between items-center">
+                    <h2 class="text-xs font-bold uppercase tracking-widest text-space-cyan text-glow-cyan flex items-center gap-1.5">
+                        <span>🌌</span> Celestial Orb Scanner
+                    </h2>
+                    <span class="text-[10px] text-fuchsia-300 bg-fuchsia-950/80 px-2 py-0.5 rounded-full border border-fuchsia-700/40">Simulated AI</span>
+                </div>
+
+                <div onclick="simulatedScan()" class="cosmic-card rounded-2xl p-4 flex flex-col items-center justify-center text-center cursor-pointer hover:border-space-cyan/70 transition-all group">
+                    <div class="w-10 h-10 rounded-full bg-slate-900 border border-space-cyan/40 flex items-center justify-center mb-1 group-hover:scale-110 transition-transform">
+                        <span class="text-xl">📸</span>
+                    </div>
+                    <p class="text-xs font-bold text-space-starlight">Scan Leftovers in Your Refrigerator</p>
+                    <p class="text-[10px] text-purple-300 mt-0.5">Click to auto-identify ingredients and quantities</p>
+                </div>
+            </section>
+
+            <!-- Section 2: Active Pantry Leftovers Checklist -->
+            <section class="space-y-3">
+                <div class="flex justify-between items-center">
+                    <h2 class="text-xs font-bold uppercase tracking-widest text-space-gold text-glow-gold flex items-center gap-1.5">
+                        <span>🧪</span> Active Leftover Pantry
+                    </h2>
+                    <span class="text-[11px] text-purple-300">3 Items Ready</span>
+                </div>
+
+                <div class="space-y-2">
+                    <!-- Item 1 -->
+                    <div class="flex items-center justify-between p-3 rounded-xl bg-purple-950/40 border border-space-border hover:border-space-cyan/50 transition-all">
+                        <div class="flex items-center space-x-3">
+                            <input type="checkbox" checked class="w-4 h-4 rounded border-purple-500 bg-slate-900 accent-fuchsia-500">
+                            <div>
+                                <p class="text-xs font-bold text-slate-100">🍚 Starlight Jasmine Rice</p>
+                                <p class="text-[10px] text-purple-300">Cooked Rice • <span class="text-emerald-400">Fresh (2 days remaining)</span></p>
+                            </div>
+                        </div>
+                        <span class="text-[11px] bg-slate-900 border border-purple-500/40 text-space-gold px-2 py-0.5 rounded font-mono">1.5 Cups</span>
+                    </div>
+
+                    <!-- Item 2 -->
+                    <div class="flex items-center justify-between p-3 rounded-xl bg-purple-950/40 border border-space-border hover:border-space-cyan/50 transition-all">
+                        <div class="flex items-center space-x-3">
+                            <input type="checkbox" checked class="w-4 h-4 rounded border-purple-500 bg-slate-900 accent-fuchsia-500">
+                            <div>
+                                <p class="text-xs font-bold text-slate-100">🫑 Solar Flare Peppers</p>
+                                <p class="text-[10px] text-purple-300">Sliced Peppers • <span class="text-amber-400">Cook Soon</span></p>
+                            </div>
+                        </div>
+                        <span class="text-[11px] bg-slate-900 border border-purple-500/40 text-space-gold px-2 py-0.5 rounded font-mono">1 Pepper</span>
+                    </div>
+
+                    <!-- Item 3 -->
+                    <div class="flex items-center justify-between p-3 rounded-xl bg-purple-950/40 border border-space-border hover:border-space-cyan/50 transition-all">
+                        <div class="flex items-center space-x-3">
+                            <input type="checkbox" checked class="w-4 h-4 rounded border-purple-500 bg-slate-900 accent-fuchsia-500">
+                            <div>
+                                <p class="text-xs font-bold text-slate-100">🥚 Phoenix Celestial Eggs</p>
+                                <p class="text-[10px] text-purple-300">Fresh Eggs • <span class="text-emerald-400">Stable Essence</span></p>
+                            </div>
+                        </div>
+                        <span class="text-[11px] bg-slate-900 border border-purple-500/40 text-space-gold px-2 py-0.5 rounded font-mono">2 Eggs</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 3: Recipes with Interactive Step-by-Step Guidance -->
+            <section class="space-y-3">
+                <div class="flex justify-between items-center">
+                    <h2 class="text-xs font-bold uppercase tracking-widest text-space-magenta text-glow-magenta flex items-center gap-1.5">
+                        <span>📜</span> Transmutation Formulas
+                    </h2>
+                    <span class="text-[11px] text-purple-300">2 Matches Found</span>
+                </div>
+
+                <!-- Recipe Card 1 -->
+                <div class="cosmic-card rounded-2xl overflow-hidden border-space-border group">
+                    <div class="h-32 w-full relative bg-slate-900 overflow-hidden flex items-center justify-center">
+                        <!-- SVG Visual Image Placeholder -->
+                        <svg class="w-full h-full object-cover" viewBox="0 0 400 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <rect width="400" height="160" fill="#120E2E"/>
+                            <circle cx="200" cy="80" r="60" fill="#FF007F" opacity="0.15"/>
+                            <path d="M140 100 Q200 40 260 100" stroke="#00F0FF" stroke-width="3" fill="none"/>
+                            <text x="50%" y="45%" dominant-baseline="middle" text-anchor="middle" fill="#E0E7FF" font-size="14" font-weight="bold">Supernova Starlight Stir-Fry</text>
+                            <text x="50%" y="65%" dominant-baseline="middle" text-anchor="middle" fill="#FFD700" font-size="11">✨ Rice + Pepper + Eggs ✨</text>
+                        </svg>
+                        <span class="absolute top-2.5 left-2.5 text-[10px] font-extrabold text-space-cyan bg-slate-950/80 border border-space-cyan/40 px-2 py-0.5 rounded-full">
+                            95% Match
+                        </span>
+                        <span class="absolute top-2.5 right-2.5 text-[10px] text-space-gold bg-slate-950/80 border border-space-gold/40 px-2 py-0.5 rounded-full">
+                            ⏱️ 15 Mins
+                        </span>
+                    </div>
+
+                    <div class="p-3.5 space-y-2.5">
+                        <div>
+                            <h3 class="text-sm font-extrabold text-slate-100">Supernova Starlight Stir-Fry</h3>
+                            <p class="text-[11px] text-purple-200 mt-0.5">A savory cosmic stir-fry binding crisp peppers, scrambled golden eggs, and jasmine rice.</p>
+                        </div>
+
+                        <!-- Astra Substitution Tip -->
+                        <div class="p-2 rounded-xl bg-purple-950/60 border border-space-cyan/30 text-[10px] text-purple-200 flex items-start gap-1.5">
+                            <span class="text-xs">🔄</span>
+                            <div>
+                                <span class="font-bold text-space-cyan">Astra's Substitution Tip:</span>
+                                <p class="text-purple-300">No soy sauce? Use tamari, liquid aminos, or a pinch of garlic salt with butter.</p>
+                            </div>
+                        </div>
+
+                        <button onclick="openRecipeModal('recipe1')" class="w-full py-2 bg-gradient-to-r from-purple-600 via-fuchsia-600 to-space-cyan hover:opacity-90 rounded-xl text-xs font-bold text-white shadow-md transition-all">
+                            📖 Cook Step-by-Step
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Recipe Card 2 -->
+                <div class="cosmic-card rounded-2xl overflow-hidden border-space-border group">
+                    <div class="h-32 w-full relative bg-slate-900 overflow-hidden flex items-center justify-center">
+                        <!-- SVG Visual Image Placeholder -->
+                        <svg class="w-full h-full object-cover" viewBox="0 0 400 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <rect width="400" height="160" fill="#120E2E"/>
+                            <circle cx="200" cy="80" r="50" fill="#FFD700" opacity="0.2"/>
+                            <circle cx="200" cy="80" r="35" stroke="#FFD700" stroke-width="2" fill="none"/>
+                            <text x="50%" y="45%" dominant-baseline="middle" text-anchor="middle" fill="#E0E7FF" font-size="14" font-weight="bold">Golden Phoenix Rice Omelette</text>
+                            <text x="50%" y="65%" dominant-baseline="middle" text-anchor="middle" fill="#00F0FF" font-size="11">🍳 Egg-Wrapped Leftover Grains 🍳</text>
+                        </svg>
+                        <span class="absolute top-2.5 left-2.5 text-[10px] font-extrabold text-space-gold bg-slate-950/80 border border-space-gold/40 px-2 py-0.5 rounded-full">
+                            85% Match
+                        </span>
+                        <span class="absolute top-2.5 right-2.5 text-[10px] text-space-gold bg-slate-950/80 border border-space-gold/40 px-2 py-0.5 rounded-full">
+                            ⏱️ 10 Mins
+                        </span>
+                    </div>
+
+                    <div class="p-3.5 space-y-2.5">
+                        <div>
+                            <h3 class="text-sm font-extrabold text-slate-100">Golden Phoenix Rice Omelette</h3>
+                            <p class="text-[11px] text-purple-200 mt-0.5">Fluffy golden egg wrapper stuffed with warm seasoned rice and fresh diced peppers.</p>
+                        </div>
+
+                        <!-- Astra Substitution Tip -->
+                        <div class="p-2 rounded-xl bg-purple-950/60 border border-space-gold/30 text-[10px] text-purple-200 flex items-start gap-1.5">
+                            <span class="text-xs">🔄</span>
+                            <div>
+                                <span class="font-bold text-space-gold">Astra's Substitution Tip:</span>
+                                <p class="text-purple-300">Missing bell peppers? Swap with diced onions, cooked spinach, or leftover broccoli.</p>
+                            </div>
+                        </div>
+
+                        <button onclick="openRecipeModal('recipe2')" class="w-full py-2 bg-gradient-to-r from-space-gold via-fuchsia-600 to-purple-600 hover:opacity-90 rounded-xl text-xs font-bold text-slate-950 shadow-md transition-all">
+                            📖 Cook Step-by-Step
+                        </button>
+                    </div>
+                </div>
+
+            </section>
+        </div>
+
+        <!-- Footer Navigation -->
+        <nav class="p-3 bg-slate-950/90 border-t border-space-border flex justify-around items-center backdrop-blur-md">
+            <button class="flex flex-col items-center gap-1 text-space-cyan text-glow-cyan">
+                <span class="text-base">🌌</span>
+                <span class="text-[10px] font-bold">Pantry</span>
+            </button>
+            <button onclick="astraSpeak('Recipes auto-adapt based on ingredients you check in your pantry!')" class="flex flex-col items-center gap-1 text-purple-400 hover:text-purple-200">
+                <span class="text-base">📜</span>
+                <span class="text-[10px] font-bold">Recipes</span>
+            </button>
+            <button onclick="astraSpeak('Every leftover meal reduces food waste and saves cosmic energy!')" class="flex flex-col items-center gap-1 text-purple-400 hover:text-purple-200">
+                <span class="text-base">✨</span>
+                <span class="text-[10px] font-bold">Impact</span>
+            </button>
+        </nav>
+    </main>
+
+    <!-- STEP-BY-STEP COOKING RECIPE MODAL -->
+    <div id="recipe-modal" class="fixed inset-0 modal-overlay hidden flex items-center justify-center p-4 z-50">
+        <div class="cosmic-card w-full max-w-md rounded-3xl max-h-[85vh] overflow-y-auto border border-space-cyan/50 p-5 space-y-4 relative">
+            <!-- Close Modal Button -->
+            <button onclick="closeRecipeModal()" class="absolute top-4 right-4 w-7 h-7 rounded-full bg-slate-900 border border-purple-500/50 flex items-center justify-center text-space-cyan hover:text-white text-xs font-bold">
+                ✕
+            </button>
+
+            <!-- Dynamic Body Content Container -->
+            <div id="modal-body"></div>
+        </div>
+    </div>
+
+    <!-- Vanilla Javascript Logic -->
+    <script>
+        // --- 1. Dynamic Animated Stars Canvas ---
+        const canvas = document.getElementById('starfield');
+        const ctx = canvas.getContext('2d');
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        const stars = Array.from({ length: 100 }, () => ({
+            x: Math.random() * window.innerWidth,
+            y: Math.random() * window.innerHeight,
+            radius: Math.random() * 1.5 + 0.3,
+            color: ['#FFFFFF', '#00F0FF', '#FFD700', '#FF007F', '#8A2BE2'][Math.floor(Math.random() * 5)],
+            alpha: Math.random(),
+            speed: Math.random() * 0.015 + 0.005,
+            direction: Math.random() > 0.5 ? 1 : -1
+        }));
+
+        function animateStars() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            stars.forEach(star => {
+                star.alpha += star.speed * star.direction;
+                if (star.alpha >= 1 || star.alpha <= 0.1) {
+                    star.direction *= -1;
+                }
+                ctx.beginPath();
+                ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
+                ctx.fillStyle = star.color;
+                ctx.globalAlpha = Math.max(0, Math.min(1, star.alpha));
+                ctx.fill();
+            });
+            requestAnimationFrame(animateStars);
+        }
+        animateStars();
+
+        // --- 2. Astra Star Being Dialogue Companion ---
+        const astraTips = [
+            "Tip: Adding a drop of water when reheating cooked rice makes it fluffy as new starlight!",
+            "Did you know? Leftover vegetables make an enchanting base for cosmic soups!",
+            "Don't throw away herb stems! Chop them finely into your omelettes for concentrated flavor magic.",
+            "Cook with confidence! Every leftover saved helps reduce earthly food waste."
+        ];
+        let tipIdx = 0;
+
+        function astraSpeak(text) {
+            document.getElementById('astra-message').innerText = `"${text}"`;
+        }
+
+        function cycleAstraTip() {
+            tipIdx = (tipIdx + 1) % astraTips.length;
+            astraSpeak(astraTips[tipIdx]);
+        }
+
+        function simulatedScan() {
+            astraSpeak("Scanning celestial refrigerator... Magic complete! Identified rice, peppers, and eggs.");
+        }
+
+        // --- 3. Cooking Recipes Data & Modal Handlers ---
+        const recipeData = {
+            recipe1: {
+                title: "Supernova Starlight Stir-Fry",
+                prepTime: "15 Minutes",
+                skill: "Apprentice Alchemist",
+                ingredients: [
+                    "1.5 cups Starlight Jasmine Rice (Leftover Rice)",
+                    "1 Solar Flare Bell Pepper (sliced)",
+                    "2 Phoenix Celestial Eggs (beaten)",
+                    "1 tbsp Cooking Oil or Butter",
+                    "1 tbsp Soy Sauce (or substitution)"
+                ],
+                substitutions: "No Soy Sauce? Use tamari, liquid aminos, or a pinch of garlic salt with butter.",
+                steps: [
+                    "Heat 1 tablespoon of cooking oil in a pan or wok over medium-high heat.",
+                    "Add sliced Solar Flare Bell Peppers and stir-fry for 2 minutes until crisp-tender.",
+                    "Push peppers to one side, pour beaten Phoenix Eggs into the pan, and scramble lightly.",
+                    "Add Starlight Jasmine Rice and soy sauce. Toss together for 3-4 minutes until piping hot.",
+                    "Garnish with herbs or seasoning and serve warm!"
+                ]
+            },
+            recipe2: {
+                title: "Golden Phoenix Rice Omelette",
+                prepTime: "10 Minutes",
+                skill: "Apprentice Alchemist",
+                ingredients: [
+                    "2 Phoenix Celestial Eggs",
+                    "0.5 cup Starlight Jasmine Rice",
+                    "0.5 Solar Flare Bell Pepper (diced)",
+                    "Pinch of Salt & Pepper",
+                    "1 tsp Butter or Oil"
+                ],
+                substitutions: "Missing bell peppers? Swap with diced onions, cooked spinach, or leftover broccoli.",
+                steps: [
+                    "Whisk Phoenix Celestial Eggs in a small bowl with salt and pepper.",
+                    "Melt butter in a skillet over medium flame.",
+                    "Warm leftover rice and diced peppers separately in a microwave or small pan.",
+                    "Pour beaten eggs into skillet to form a smooth circular omelette base.",
+                    "Spoon warm rice and peppers onto one half of the omelette, fold over, and serve hot!"
+                ]
+            }
+        };
+
+        function openRecipeModal(key) {
+            const data = recipeData[key];
+            if (!data) return;
+
+            const container = document.getElementById('modal-body');
+            container.innerHTML = `
+                <div class="space-y-4">
+                    <div>
+                        <span class="text-[10px] text-space-gold bg-purple-950 border border-space-gold/40 px-2 py-0.5 rounded-full font-mono">
+                            ⏱️ ${data.prepTime} • ${data.skill}
+                        </span>
+                        <h2 class="text-base font-extrabold text-space-cyan text-glow-cyan mt-2">${data.title}</h2>
+                        <p class="text-[11px] text-purple-300">Step-by-Step Cooking Instructions</p>
+                    </div>
+
+                    <!-- Required Ingredients -->
+                    <div class="p-3 rounded-xl bg-purple-950/60 border border-space-border space-y-1.5">
+                        <p class="text-xs font-bold text-space-gold flex items-center gap-1">
+                            <span>🧪</span> Required Ingredients:
+                        </p>
+                        <ul class="text-xs text-purple-100 space-y-1 pl-4 list-disc">
+                            ${data.ingredients.map(i => `<li>${i}</li>`).join('')}
+                        </ul>
+                    </div>
+
+                    <!-- Astra Substitution Advice -->
+                    <div class="p-2.5 rounded-xl bg-slate-900 border border-space-cyan/40 text-xs">
+                        <span class="font-bold text-space-cyan">✨ Astra's Substitution Advice:</span>
+                        <p class="text-purple-200 mt-0.5 text-[11px]">${data.substitutions}</p>
+                    </div>
+
+                    <!-- Step-by-Step Guide -->
+                    <div class="space-y-2">
+                        <p class="text-xs font-bold text-space-magenta flex items-center gap-1">
+                            <span>🔥</span> Cooking Ritual Steps:
+                        </p>
+                        <div class="space-y-1.5">
+                            ${data.steps.map((step, idx) => `
+                                <div class="flex items-start gap-2 p-2 rounded-xl bg-slate-950 border border-purple-900/50">
+                                    <span class="w-4 h-4 rounded-full bg-purple-900 text-space-cyan text-[10px] font-bold flex items-center justify-center shrink-0 mt-0.5">${idx + 1}</span>
+                                    <p class="text-xs text-purple-100 leading-snug">${step}</p>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+
+                    <button onclick="closeRecipeModal(); astraSpeak('Fantastic work cooking zero-waste!')" class="w-full py-2.5 bg-gradient-to-r from-space-cyan to-purple-600 rounded-xl text-xs font-bold text-white shadow-md">
+                        ✨ Complete Cooking Ritual
+                    </button>
+                </div>
+            `;
+
+            document.getElementById('recipe-modal').classList.remove('hidden');
+        }
+
+        function closeRecipeModal() {
+            document.getElementById('recipe-modal').classList.add('hidden');
+        }
+    </script>
+</body>
+</html>
